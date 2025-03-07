@@ -11,7 +11,7 @@
 #include <iostream>
 #include "network.h"
 #include "iconlist.h"
-#include "build/QtApp_autogen/include/build/ui_mainwindow.h"
+#include "build/QtCheevos_autogen/include/build/ui_mainwindow.h"
 
 namespace Ui {
     class MainWindow;

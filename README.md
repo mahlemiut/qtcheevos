@@ -14,7 +14,7 @@ be easily adapted for Windows or OS X.
 
 1)  Go to the folder you extracted the source to
 
-2) ``cmake .`` followed by ``make``
+2) ``cmake -S. -B../build -G Ninja`` followed by ``cmake --build ../build --target all``
 
 
 ## License
