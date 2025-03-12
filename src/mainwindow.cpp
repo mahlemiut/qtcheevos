@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->show_rank->setChecked(settings.value("showrank", true).toBool());
 	tracker->setShowRank(ui->show_rank->isChecked());
     ui->spin_refreshtime->setValue(settings.value("refreshtime", 5).toInt());
-    timer->setInterval(ui->spin_refreshtime->value());
+    timer->setInterval(ui->spin_refreshtime->value() * 1000);
 }
 
 MainWindow::~MainWindow()
@@ -312,9 +312,16 @@ void TrackerFrame::paintEvent(QPaintEvent *event)
     
 		bounds = painter.boundingRect(QRect(0,currentline,width(),height()), Qt::AlignHCenter | Qt::TextWordWrap, gamename);
 		painter.drawText(bounds, Qt::AlignHCenter | Qt::TextWordWrap, gamename);
-		currentline += bounds.height()+5;
+		currentline += bounds.height();
+
+        font.setPointSize(12);
+        painter.setFont(font);
+        bounds = painter.boundingRect(QRect(0,currentline,width(),height()), Qt::AlignHCenter | Qt::TextWordWrap, systemname);
+        painter.drawText(bounds, Qt::AlignHCenter | Qt::TextWordWrap, systemname);
+        currentline += bounds.height() + 5;
 		painter.drawLine(0, currentline, width(), currentline);
 		currentline += 5;
+
 	}
 
     // draw achevement and score progress
@@ -398,6 +405,7 @@ void TrackerFrame::handleSummary(QByteArray n)
     QJsonArray played = doc.array();
     int temp;
     gamename = played[0].toObject()["Title"].toString();
+    systemname = played[0].toObject()["ConsoleName"].toString();
     boxurl = played[0].toObject()["ImageBoxArt"].toString();
     cheevoUnlocks = played[0].toObject()["NumAchieved"].toInt();
     cheevoTotal = played[0].toObject()["AchievementsTotal"].toInt();

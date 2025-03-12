@@ -73,6 +73,7 @@ private:
     QColor bgcol;
     int gameID;
     QString gamename;
+    QString systemname;
     QString boxurl;
 	int cheevoUnlocks;
 	int cheevoTotal;
