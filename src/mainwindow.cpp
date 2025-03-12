@@ -45,6 +45,8 @@ MainWindow::MainWindow(QWidget *parent)
     tracker->setShowBox(settings.value("showbox", true).toBool());
 	ui->show_rank->setChecked(settings.value("showrank", true).toBool());
 	tracker->setShowRank(ui->show_rank->isChecked());
+    ui->spin_refreshtime->setValue(settings.value("refreshtime", 5).toInt());
+    timer->setInterval(ui->spin_refreshtime->value());
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +62,7 @@ MainWindow::~MainWindow()
     settings.setValue("font", ui->choosefont->font());
     settings.setValue("showbox", ui->opt_bgimage->isChecked());
 	settings.setValue("showrank", ui->show_rank->isChecked());
+    settings.setValue("refreshtime", ui->spin_refreshtime->value());
     delete ui;
 }
 
@@ -70,7 +73,7 @@ void MainWindow::tracker_clicked()
     if (tracker_visible)
     {
         tracker->show();
-        timer->start(5000);
+        timer->start();
     }
     else
     {
@@ -148,6 +151,11 @@ void MainWindow::showicons_clicked()
 void MainWindow::showrank_clicked()
 {
 	tracker->setShowRank(ui->show_rank->isChecked());
+}
+
+void MainWindow::refreshtimer_changed()
+{
+    timer->setInterval(ui->spin_refreshtime->value() * 1000);
 }
 
 // Tracker Window implementation

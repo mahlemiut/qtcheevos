@@ -143,6 +143,7 @@ private slots:
     void showprogress_clicked();
     void showicons_clicked();
     void showrank_clicked();
+    void refreshtimer_changed();
     
 private:
     Ui::MainWindow* ui;

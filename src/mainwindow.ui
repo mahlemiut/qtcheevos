@@ -252,6 +252,9 @@
     </property>
    </widget>
    <widget class="QPushButton" name="btn_refresh">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -294,6 +297,35 @@
     </property>
     <property name="checked">
      <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>320</x>
+      <y>80</y>
+      <width>151</width>
+      <height>18</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Refresh timer (seconds):</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spin_refreshtime">
+    <property name="geometry">
+     <rect>
+      <x>470</x>
+      <y>80</y>
+      <width>42</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>3</number>
+    </property>
+    <property name="maximum">
+     <number>10</number>
     </property>
    </widget>
   </widget>
@@ -493,6 +525,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>spin_refreshtime</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>refreshtimer_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>490</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>tracker_clicked()</slot>
@@ -507,5 +555,6 @@
   <slot>showprogress_clicked()</slot>
   <slot>showicons_clicked()</slot>
   <slot>showrank_clicked()</slot>
+  <slot>refreshtimer_changed()</slot>
  </slots>
 </ui>
