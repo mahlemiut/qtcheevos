@@ -100,7 +100,7 @@ void MainWindow::choosebgcol_clicked()
 void MainWindow::choosefont_clicked()
 {
     bool ok;
-    QFont f = QFontDialog::getFont(&ok, this);
+    QFont f = QFontDialog::getFont(&ok, ui->choosefont->font(), this);
     if (ok) 
     {
         ui->choosefont->setFont(f);
@@ -264,6 +264,22 @@ TrackerFrame::~TrackerFrame()
 {
 }
 
+/**
+ * @brief Handles the paint event for the TrackerFrame.
+ * 
+ * This function is responsible for rendering the contents of the TrackerFrame.
+ * It uses QPainter to draw various elements such as background, game information,
+ * achievement progress, and achievement icons based on the current state and settings.
+ * 
+ * @param event Pointer to the QPaintEvent object containing event data.
+ * 
+ * The function performs the following tasks:
+ * - Fills the background with a specified color or an image if available.
+ * - Draws the total points and rank if the showrank flag is true.
+ * - Draws the game title and system name if the showgamename flag is true.
+ * - Draws the achievement and score progress if the showprogress flag is true.
+ * - Draws the achievement icons if the showcheevoicons flag is true.
+ */
 void TrackerFrame::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
@@ -399,6 +415,17 @@ void TrackerFrame::handleData(const QByteArray &n)
     update();
 }
 
+
+/**
+ * @brief Handles the summary data received in JSON format.
+ *
+ * This function processes the JSON data received, extracts relevant information
+ * about the game, and updates the member variables accordingly. It then emits
+ * signals based on whether the game ID has changed or not, and sets the next
+ * step in the process.
+ *
+ * @param n The JSON data received as a QByteArray.
+ */
 void TrackerFrame::handleSummary(QByteArray n)
 {
     QJsonDocument doc = QJsonDocument::fromJson(n);
