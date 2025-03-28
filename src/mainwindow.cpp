@@ -165,6 +165,7 @@ TrackerWindow::TrackerWindow(TrackerData* d, QWidget *parent)
       frame(new TrackerFrame(this))
 {
     setGeometry(50, 50, 448, 800);
+    setMinimumSize(QSize(448, 800));
     setMaximumSize(QSize(448, 800));
     frame->setGeometry(0, 0, 448, 800);
     connect(frame, &TrackerFrame::dataReceived, this, &TrackerWindow::dataReceived);
@@ -323,46 +324,53 @@ void TrackerFrame::paintEvent(QPaintEvent *event)
     // draw game title
     if(showgamename)
     {
-	    font.setPointSize(24);
-    	painter.setFont(font);
+        font.setPointSize(24);
+        painter.setFont(font);
     
-		bounds = painter.boundingRect(QRect(0,currentline,width(),height()), Qt::AlignHCenter | Qt::TextWordWrap, gamename);
-		painter.drawText(bounds, Qt::AlignHCenter | Qt::TextWordWrap, gamename);
-		currentline += bounds.height();
+        bounds = painter.boundingRect(QRect(0,currentline,width(),height()), Qt::AlignHCenter | Qt::TextWordWrap, gamename);
+        painter.drawText(bounds, Qt::AlignHCenter | Qt::TextWordWrap, gamename);
+        currentline += bounds.height();
 
         font.setPointSize(12);
         painter.setFont(font);
         bounds = painter.boundingRect(QRect(0,currentline,width(),height()), Qt::AlignHCenter | Qt::TextWordWrap, systemname);
         painter.drawText(bounds, Qt::AlignHCenter | Qt::TextWordWrap, systemname);
         currentline += bounds.height() + 5;
-		painter.drawLine(0, currentline, width(), currentline);
-		currentline += 5;
+        painter.drawLine(0, currentline, width(), currentline);
+        currentline += 5;
 
-	}
+    }
 
     // draw achevement and score progress
-	if(showprogress)
-	{
-		font.setPointSize(20);
-		painter.setFont(font);
+    if(showprogress)
+    {
+        font.setPointSize(20);
+        painter.setFont(font);
 
-		text = "Achievements: " + QString::number(cheevoUnlocks) + "/" + QString::number(cheevoTotal);
-		bounds = painter.boundingRect(QRect(0,currentline,width(),height()), Qt::AlignHCenter | Qt::TextWordWrap, text);
-		painter.drawText(bounds, Qt::AlignHCenter | Qt::TextWordWrap, text);
-		currentline += bounds.height()+5;
+        text = "Achievements: " + QString::number(cheevoUnlocks) + "/" + QString::number(cheevoTotal);
+        bounds = painter.boundingRect(QRect(0,currentline,width(),height()), Qt::AlignHCenter | Qt::TextWordWrap, text);
+        painter.drawText(bounds, Qt::AlignHCenter | Qt::TextWordWrap, text);
+        currentline += bounds.height()+5;
 
-		text = "Score: " + QString::number(score) + "/" + QString::number(maxscore);
-		bounds = painter.boundingRect(QRect(0,currentline,width(),height()), Qt::AlignHCenter | Qt::TextWordWrap, text);
-		painter.drawText(bounds, Qt::AlignHCenter | Qt::TextWordWrap, text);
-		currentline += bounds.height()+5;
-		painter.drawLine(0, currentline, width(), currentline);
-		currentline += 5;
-	}
+        text = "Score: " + QString::number(score) + "/" + QString::number(maxscore);
+        bounds = painter.boundingRect(QRect(0,currentline,width(),height()), Qt::AlignHCenter | Qt::TextWordWrap, text);
+        painter.drawText(bounds, Qt::AlignHCenter | Qt::TextWordWrap, text);
+        currentline += bounds.height()+5;
+        painter.drawLine(0, currentline, width(), currentline);
+        currentline += 5;
+    }
 
     // draw achievement icons
     if(showcheevoicons)
     {
-        int iconsperline = width() / 64;
+        int iconSize = 64;
+        int iconsperline = width() / iconSize;
+        int totalLines = (iconlist->getIconList()->size() + iconsperline - 1) / iconsperline;
+        if (currentline + totalLines * iconSize > height())
+        {
+            iconSize = 32; // Reduce icon size to fit
+            iconsperline = width() / iconSize;
+        }
 
         if(iconlist->getIconList()->size() > 0)
         {
@@ -373,11 +381,12 @@ void TrackerFrame::paintEvent(QPaintEvent *event)
                 if (x >= iconsperline)
                 {
                     x = 0;
-                    y += 64;
+                    y += iconSize;
                 }
-                painter.drawImage(x*64, y, iconlist->getIconList()->at(i).image);
+                QRect iconRect(x * iconSize, y, iconSize, iconSize);
+                painter.drawImage(iconRect, iconlist->getIconList()->at(i).image);
                 if(iconlist->getIconList()->at(i).unlocked == false)
-                    painter.fillRect(x*64, y, 64, 64, QColor(0,0,0,196));
+                    painter.fillRect(iconRect, QColor(0,0,0,196));
                 x++;
             }
         }
