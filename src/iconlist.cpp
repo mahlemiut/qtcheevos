@@ -20,6 +20,22 @@ IconList::~IconList()
     delete manager;
 }
 
+/**
+ * @brief Fetches and processes the icons for a specific game and user.
+ * 
+ * This function retrieves game information and user progress from the RetroAchievements API
+ * for the specified game ID and user credentials. If the game ID differs from the previously
+ * loaded game, the icon list is cleared and reloaded. Otherwise, the icons are not reloaded.
+ * 
+ * @param gameID The unique identifier of the game for which icons are to be fetched.
+ * @param username The username of the user whose progress is to be retrieved.
+ * @param apiKey The API key used for authentication with the RetroAchievements API.
+ * 
+ * The function performs the following steps:
+ * - Clears the icon list if the game ID has changed.
+ * - Sets up the necessary connections for handling the API response.
+ * - Sends a GET request to the RetroAchievements API to fetch the game information and user progress.
+ */
 void IconList::getIcons(int gameID, QString username, QString apiKey)
 {
     QNetworkRequest request;
@@ -48,6 +64,22 @@ void IconList::clear()
 	loadicons = true;
 }
 
+/**
+ * @brief Handles the response received from a network request for the list of achievements.
+ * 
+ * This function processes the JSON response from the network reply, extracts achievement data,
+ * and updates the internal list of icons. It also emits a signal to notify that icons have been loaded.
+ * 
+ * @param reply A pointer to the QNetworkReply object containing the response data.
+ * 
+ * The function performs the following steps:
+ * - Checks for errors in the network reply and logs the error message if any.
+ * - Parses the JSON response to extract achievement data.
+ * - If `loadicons` is true, populates the `icons` list with achievement details, including ID, URL, and unlocked status.
+ * - If `loadicons` is false, updates the unlocked status of existing icons in the list.
+ * - Emits the `iconLoad` signal to indicate that icons have been loaded.
+ * - Disconnects the relevant signals and deletes the reply object to clean up resources.
+ */
 void IconList::ListReceived(QNetworkReply *reply)
 {
     if (reply->error())

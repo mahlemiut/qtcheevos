@@ -22,7 +22,7 @@ TrackerData::~TrackerData()
 }
 
 /**
- * @brief Sends a summary of the user's recent activity to the server.
+ * @brief Retrieves a summary of the user's recent activity from the server.
  *
  * This function constructs a URL using the user's API key and username, and sends
  * a GET request to the RetroAchievements API to retrieve the user's recent activity summary.
