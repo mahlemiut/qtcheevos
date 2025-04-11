@@ -27,6 +27,10 @@ set(UI_FILES
 
 #qt6_wrap_ui(UI_HEADERS ${UI_FILES})
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS} ${UI_HEADERS})
+if(WIN32)
+    add_definitions(-DWIN32)
+endif()
+
+add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${HEADERS} ${UI_HEADERS})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network)
