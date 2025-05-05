@@ -135,6 +135,7 @@ void IconList::PopulateIcons()
 	QNetworkRequest request;
 	loadphase = Icons;
 	request.setUrl(QUrl("https://retroachievements.org" + icons[pos].url));
+	request.setTransferTimeout(5000);
 	//std::cout << pos << ":" << request.url().toString().toStdString() << std::endl;
 	connect(manager, &QNetworkAccessManager::finished, this, &IconList::IconsReceived);
 	manager->get(request);
@@ -142,19 +143,34 @@ void IconList::PopulateIcons()
 
 void IconList::IconsReceived(QNetworkReply *reply)
 {
-	if (reply->error())
-	{
-		qDebug() << reply->errorString();
-		return;
-	}
+    if (reply->error())
+    {
+        qDebug() << reply->errorString();
+        if (reply->error() == QNetworkReply::TimeoutError || 
+            reply->error() == QNetworkReply::OperationCanceledError)
+        {
+            // Immediately retry the download for this icon
+            disconnect(manager, &QNetworkAccessManager::finished, this, &IconList::IconsReceived);
+            reply->deleteLater();
+            PopulateIcons(); // Retry the same icon (pos hasn't been incremented)
+            return;
+        }
+        return;
+    }
 
-	QByteArray data = reply->readAll();
-	QImage image;
-	image.loadFromData(data);
-	if(reply->url().toString() == "https://retroachievements.org" + icons[pos].url)
-	{
-		icons[pos].image = image;
-	}
+    QByteArray data = reply->readAll();
+    QImage image;
+    if (!image.loadFromData(data)) {
+        // Handle failed image load by retrying
+        disconnect(manager, &QNetworkAccessManager::finished, this, &IconList::IconsReceived);
+        reply->deleteLater();
+        PopulateIcons(); // Retry the same icon
+        return;
+    }
+    if(reply->url().toString() == "https://retroachievements.org" + icons[pos].url)
+    {
+        icons[pos].image = image;
+    }
 //	std::cout << pos << ":" << "Loaded:" << icons[pos].url.toStdString() << std::endl;
 	disconnect(manager, &QNetworkAccessManager::finished, this, &IconList::IconsReceived);
 	pos++;
