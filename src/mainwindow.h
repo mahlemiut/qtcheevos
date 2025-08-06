@@ -69,6 +69,10 @@ private:
     bool showprogress;
     bool showcheevoicons;
     bool showrank;
+    int ShowRank(QPainter &painter, int *currentline);
+    int ShowGameName(QPainter &painter, int *currentline);
+    int ShowProgress(QPainter &painter, int *currentline);
+    int ShowCheevoIcons(QPainter &painter, int *currentline);
     QFont font;
     QColor bgcol;
     int gameID;
