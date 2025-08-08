@@ -47,6 +47,13 @@ MainWindow::MainWindow(QWidget *parent)
 	tracker->setShowRank(ui->show_rank->isChecked());
 	ui->spin_refreshtime->setValue(settings.value("refreshtime", 5).toInt());
 	timer->setInterval(ui->spin_refreshtime->value() * 1000);
+
+	// read display group order
+	for (int i = 0; i < LAST - 1; i++)
+	{
+		tracker->getOrder()[i].group = settings.value(QString("order_%1_group").arg(i), i).toInt();
+		tracker->getOrder()[i].order = settings.value(QString("order_%1_order").arg(i), i).toInt();
+	}
 }
 
 MainWindow::~MainWindow()
@@ -63,6 +70,14 @@ MainWindow::~MainWindow()
 	settings.setValue("showbox", ui->opt_bgimage->isChecked());
 	settings.setValue("showrank", ui->show_rank->isChecked());
 	settings.setValue("refreshtime", ui->spin_refreshtime->value());
+
+	// save group order
+	for (int i = 0; i < LAST - 1; i++)
+	{
+		settings.setValue(QString("order_%1_group").arg(i), tracker->getOrder()[i].group);
+		settings.setValue(QString("order_%1_order").arg(i), tracker->getOrder()[i].order);
+	}
+	
 	delete ui;
 }
 
