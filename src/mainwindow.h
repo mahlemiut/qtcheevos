@@ -109,6 +109,8 @@ private:
 	int currentStep;
 	IconList* iconlist;
 	struct GroupOrder order[LAST - 1];
+	bool errorState;
+	QString errorString;
 };
 
 class TrackerWindow : public QWidget

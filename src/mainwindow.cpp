@@ -285,7 +285,9 @@ TrackerFrame::TrackerFrame(QWidget *parent)
 	bgcol(QColor(255, 0, 255)),
 	gameID(0),
 	currentStep(Idle),
-	iconlist(new IconList(this))
+	iconlist(new IconList(this)),
+	errorState(false),
+	errorString("")
 {
 	setFrameStyle(QFrame::Panel);
 	setLineWidth(0);
@@ -315,6 +317,7 @@ void TrackerFrame::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
 	int currentline = 0;
+
 	if(boximage.isNull() || showbox == false || gamename.isEmpty())
 	{
 		painter.fillRect(0, 0, width(), height(), bgcol);
@@ -323,6 +326,15 @@ void TrackerFrame::paintEvent(QPaintEvent *event)
 	{
 		painter.drawImage(QRect(0, 0, width(), height()), boximage);
 		painter.fillRect(0, 0, width(), height(), QColor(0,0,0,128));
+	}
+
+	if(errorState)
+	{
+		font.setPointSize(24);
+		painter.setFont(font);
+		painter.setPen(Qt::yellow);
+		painter.drawText(QRect(0, 0, width(), height()), Qt::AlignCenter | Qt::TextWordWrap, errorString);
+		return;
 	}
 
 	if(gamename.isEmpty())
@@ -504,6 +516,21 @@ void TrackerFrame::handleSummary(QByteArray n)
 	QJsonDocument doc = QJsonDocument::fromJson(n);
 	QJsonArray played = doc.array();
 	int temp;
+
+	if(played.isEmpty())
+	{
+		QJsonObject obj = doc.object();
+		errorState = true;
+		if (obj.contains("message"))
+			errorString = obj["message"].toString();
+		else
+			errorString = "Error accessing API, check key.";
+		currentStep = Idle;
+		emit dataReceived(TrackerFrame::Idle);
+		return;
+	}
+
+	errorState = false;
 	gamename = played[0].toObject()["Title"].toString();
 	systemname = played[0].toObject()["ConsoleName"].toString();
 	boxurl = played[0].toObject()["ImageBoxArt"].toString();
