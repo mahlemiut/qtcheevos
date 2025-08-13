@@ -30,6 +30,7 @@ enum Groups  // orderable groups in the tracker
 struct GroupOrder
 {
 	int group;  // group type (Groups enum)
+	QString group_name;  // displayed group name
 	int order;  // order to display in
 };
 

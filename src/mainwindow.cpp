@@ -52,7 +52,22 @@ MainWindow::MainWindow(QWidget *parent)
 	for (int i = 0; i < LAST - 1; i++)
 	{
 		tracker->getOrder()[i].group = settings.value(QString("order_%1_group").arg(i), i).toInt();
-		tracker->getOrder()[i].order = settings.value(QString("order_%1_order").arg(i), i).toInt();
+		tracker->getOrder()[i].order = settings.value(QString("order_%1_order").arg(i), i).toInt();		
+		switch(i)  // fill in group names
+		{
+			case Rank:
+				tracker->getOrder()[i].group_name = "Ranking";
+				break;
+			case GameName:
+				tracker->getOrder()[i].group_name = "Game Name";
+				break;
+			case Progress:
+				tracker->getOrder()[i].group_name = "Progress";
+				break;
+			case Icons:
+				tracker->getOrder()[i].group_name = "Achievement Icons";
+				break;
+		}
 	}
 }
 
