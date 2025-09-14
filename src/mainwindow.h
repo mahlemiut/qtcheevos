@@ -11,6 +11,7 @@
 #include <iostream>
 #include "network.h"
 #include "iconlist.h"
+#include "sortwindow.h"
 #include "build/QtCheevos_autogen/include/build/ui_mainwindow.h"
 
 namespace Ui {
@@ -29,8 +30,6 @@ enum Groups  // orderable groups in the tracker
 
 struct GroupOrder
 {
-	int group;  // group type (Groups enum)
-	QString group_name;  // displayed group name
 	int order;  // order to display in
 };
 
@@ -108,7 +107,8 @@ private:
 	int overallRetroScore;
 	int currentStep;
 	IconList* iconlist;
-	struct GroupOrder order[LAST - 1];
+	struct GroupOrder order[LAST];
+
 	bool errorState;
 	QString errorString;
 };
@@ -171,6 +171,8 @@ private slots:
 	void showicons_clicked();
 	void showrank_clicked();
 	void refreshtimer_changed();
+	void showsortwindow_clicked();
+	void sortwindow_closed();
 	
 private:
 	Ui::MainWindow* ui;
@@ -182,6 +184,7 @@ private:
 	// tracker window stuff
 	TrackerWindow* tracker;
 	TrackerData* trackerData;
+	SortWindow* sortWindow;
 };
 
 #endif // MAINWINDOW_H

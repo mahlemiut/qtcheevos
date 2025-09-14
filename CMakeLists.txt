@@ -13,12 +13,14 @@ set(SOURCES
     src/mainwindow.cpp
     src/network.cpp
     src/iconlist.cpp
+    src/sortwindow.cpp
 )
 
 set(HEADERS
     src/mainwindow.h
     src/network.h
     src/iconlist.h
+    src/sortwindow.h
 )
 
 set(UI_FILES

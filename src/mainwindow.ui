@@ -328,6 +328,19 @@
      <number>10</number>
     </property>
    </widget>
+   <widget class="QPushButton" name="show_sortwindow">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>250</y>
+      <width>131</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Set display order...</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
@@ -541,6 +554,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>show_sortwindow</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showsortwindow_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>675</x>
+     <y>262</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>161</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>tracker_clicked()</slot>
@@ -556,5 +585,6 @@
   <slot>showicons_clicked()</slot>
   <slot>showrank_clicked()</slot>
   <slot>refreshtimer_changed()</slot>
+  <slot>showsortwindow_clicked()</slot>
  </slots>
 </ui>

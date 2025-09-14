@@ -14,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent)
 	  tracker_visible(false),
 	  timer(new QTimer(this)),
 	  ui(new Ui::MainWindow),
-	  trackerData(new TrackerData)
+	  trackerData(new TrackerData),
+	  sortWindow(new SortWindow(this))
 {
 	ui->setupUi(this);
 
@@ -49,26 +50,27 @@ MainWindow::MainWindow(QWidget *parent)
 	timer->setInterval(ui->spin_refreshtime->value() * 1000);
 
 	// read display group order
-	for (int i = 0; i < LAST - 1; i++)
+	for(int i = 0; i < LAST; i++)
 	{
-		tracker->getOrder()[i].group = settings.value(QString("order_%1_group").arg(i), i).toInt();
-		tracker->getOrder()[i].order = settings.value(QString("order_%1_order").arg(i), i).toInt();		
-		switch(i)  // fill in group names
+		tracker->getOrder()[i].order = settings.value(QString("order_%1").arg(i), i).toInt();		
+		switch(tracker->getOrder()[i].order)  // fill in group names
 		{
 			case Rank:
-				tracker->getOrder()[i].group_name = "Ranking";
+				sortWindow->addItem(tracker->getOrder()[i].order, "Ranking");
 				break;
 			case GameName:
-				tracker->getOrder()[i].group_name = "Game Name";
+				sortWindow->addItem(tracker->getOrder()[i].order, "Game Name");
 				break;
 			case Progress:
-				tracker->getOrder()[i].group_name = "Progress";
+				sortWindow->addItem(tracker->getOrder()[i].order, "Progress");
 				break;
 			case Icons:
-				tracker->getOrder()[i].group_name = "Achievement Icons";
+				sortWindow->addItem(tracker->getOrder()[i].order, "Achievement Icons");
 				break;
 		}
 	}
+	//sortWindow->sortItems();
+	connect(sortWindow, &SortWindow::closed, this, &MainWindow::sortwindow_closed);
 }
 
 MainWindow::~MainWindow()
@@ -87,10 +89,9 @@ MainWindow::~MainWindow()
 	settings.setValue("refreshtime", ui->spin_refreshtime->value());
 
 	// save group order
-	for (int i = 0; i < LAST - 1; i++)
+	for (int i = 0; i < LAST; i++) // order
 	{
-		settings.setValue(QString("order_%1_group").arg(i), tracker->getOrder()[i].group);
-		settings.setValue(QString("order_%1_order").arg(i), tracker->getOrder()[i].order);
+		settings.setValue(QString("order_%1").arg(i), tracker->getOrder()[i].order);
 	}
 	
 	delete ui;
@@ -186,6 +187,29 @@ void MainWindow::showrank_clicked()
 void MainWindow::refreshtimer_changed()
 {
 	timer->setInterval(ui->spin_refreshtime->value() * 1000);
+}
+
+void MainWindow::showsortwindow_clicked()
+{
+	if(sortWindow->isVisible())
+		sortWindow->hide();
+	else
+	{
+		sortWindow->show();
+		sortWindow->raise();
+		sortWindow->activateWindow();
+	}
+}
+
+void MainWindow::sortwindow_closed()
+{
+	// Handle the sort window closed event
+	for(int x=0;x<LAST;x++)
+	{
+		tracker->getOrder()[x].order = sortWindow->getIndex(x);
+		//tracker->getOrder()[x].group_name = sortWindow->getItemText(x);
+	}
+	sortWindow->hide();
 }
 
 // Tracker Window implementation
@@ -342,18 +366,30 @@ void TrackerFrame::paintEvent(QPaintEvent *event)
 
 	painter.setPen(Qt::white);
 
-	// draw total points / rank
-	ShowRank(painter, &currentline);
+	for(int x=0;x < LAST; x++)
+		std::cout << "Index " << x << ": " << order[x].order << std::endl;
 
-	// draw game title
-	ShowGameName(painter, &currentline);
-
-	// draw achevement and score progress
-	ShowProgress(painter, &currentline);
-
-	// draw achievement icons
-	ShowCheevoIcons(painter, &currentline);
-
+	for(int x = 0;x < LAST; x++)
+	{
+		int g = order[x].order;
+		{
+			switch(g)
+			{
+				case Groups::Rank:
+					ShowRank(painter, &currentline);
+					break;
+				case Groups::GameName:
+					ShowGameName(painter, &currentline);
+					break;
+				case Groups::Progress:
+					ShowProgress(painter, &currentline);
+					break;
+				case Groups::Icons:
+					ShowCheevoIcons(painter, &currentline);
+					break;
+			}
+		}
+	}
 }
 
 int TrackerFrame::ShowRank(QPainter &painter, int *currentline)
