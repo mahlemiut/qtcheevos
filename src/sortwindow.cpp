@@ -65,7 +65,6 @@ bool QMoveStringListModel::dropMimeData(const QMimeData *data, Qt::DropAction ac
 //				r--;
 
 		// Handle the move operation
-		std::cout << "Swapping items " << src << " and " << r << std::endl;
 		indexList.swapItemsAt(src, r);
 		items.swapItemsAt(src, r);
 		setIndexList(indexList);

@@ -366,9 +366,6 @@ void TrackerFrame::paintEvent(QPaintEvent *event)
 
 	painter.setPen(Qt::white);
 
-	for(int x=0;x < LAST; x++)
-		std::cout << "Index " << x << ": " << order[x].order << std::endl;
-
 	for(int x = 0;x < LAST; x++)
 	{
 		int g = order[x].order;
